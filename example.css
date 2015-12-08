@@ -1,0 +1,10 @@
+@import './index';
+
+.search__example-container {
+  position: relative;
+  width: 100%;
+  background: var(--color-kiev);
+  height: 64px;
+  font-family: var(--fontfamily-body);
+  -webkit-font-smoothing: antialiased;
+}
