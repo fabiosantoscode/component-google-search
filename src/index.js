@@ -17,6 +17,7 @@ export default class GoogleSearch extends React.Component {
       resultsUrl: React.PropTypes.string,
       cx: React.PropTypes.string, // eslint-disable-line id-length
       googleScriptUrl: React.PropTypes.string,
+      autoFocus: React.PropTypes.bool,
     };
   }
 
@@ -33,6 +34,7 @@ export default class GoogleSearch extends React.Component {
       resultsUrl: 'http://www.economist.com/search/',
       cx: '013751040265774567329:pqjb-wvrj-q', // eslint-disable-line id-length
       googleScriptUrl: 'www.google.com/cse/cse.js',
+      autoFocus: true,
     };
   }
 
@@ -56,6 +58,9 @@ export default class GoogleSearch extends React.Component {
   }
 
   focusSearchField() {
+    if (this.props.autoFocus !== true) {
+      return;
+    }
     try {
       this.googleSearchInput.focus();
     } catch (exception) {
