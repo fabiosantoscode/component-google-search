@@ -9,6 +9,11 @@ chai.use(chaiEnzyme()).should();
 chai.use(chaiSpies);
 
 describe('GoogleSearch', () => {
+  let comp = null;
+  beforeEach(() => {
+    comp = new GoogleSearch({}, {}, {});
+  });
+
   it('is compatible with React.Component', () => {
     GoogleSearch.should.be.a('function')
       .and.respondTo('render');
@@ -25,10 +30,35 @@ describe('GoogleSearch', () => {
     wrapper.state().useFallback.should.equal(false);
   });
 
+  describe('componentWillMount', () => {
+    const oldMathRandom = Math.random;
+    afterEach(() => {
+      Math.random = oldMathRandom;
+    });
+    it('calls setState with this.props.divID', () => {
+      comp.props.divID = 'test-div-id';
+      comp.setState = chai.spy();
+      comp.componentWillMount();
+      comp.setState.should.have.been.called.with({
+        divID: 'test-div-id',
+        useFallback: (typeof window === 'undefined'),
+      });
+    });
+    it('calls setState with a random hash if this.props.divID is not present', () => {
+      comp.props.divID = null;
+      Math.random = () => 0.1234;
+      const multipliedAndInHex = (1234).toString(16);
+      comp.setState = chai.spy();
+      comp.componentWillMount();
+      comp.setState.should.have.been.called.with({
+        divID: `google-search-box-${ multipliedAndInHex }`,
+        useFallback: (typeof window === 'undefined'),
+      });
+    });
+  });
+
   describe('focusSearchField', () => {
-    let comp = null;
     beforeEach(() => {
-      comp = new GoogleSearch({}, {}, {});
       comp.googleSearchInput = { focus: chai.spy() };
     });
     it('focuses the element when the autoFocus prop is true', () => {

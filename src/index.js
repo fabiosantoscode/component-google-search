@@ -3,24 +3,12 @@ import React from 'react';
 import ReactDom from 'react-dom';
 import promisescript from 'promisescript';
 
+function randomHex() {
+  return Math.floor(Math.random() * 10000).toString(16);  // eslint-disable-line no-magic-numbers
+}
+
 let googleScript = null;
 export default class GoogleSearch extends React.Component {
-
-  static get propTypes() {
-    return {
-      enableHistory: React.PropTypes.bool,
-      noResultsString: React.PropTypes.string,
-      newWindow: React.PropTypes.bool,
-      gname: React.PropTypes.string,
-      queryParameterName: React.PropTypes.string,
-      language: React.PropTypes.string,
-      resultsUrl: React.PropTypes.string,
-      cx: React.PropTypes.string, // eslint-disable-line id-length
-      googleScriptUrl: React.PropTypes.string,
-      autoFocus: React.PropTypes.bool,
-    };
-  }
-
   static get defaultProps() {
     return {
       enableHistory: true,
@@ -40,11 +28,15 @@ export default class GoogleSearch extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = {
+    this.assignRef = this.assignRef.bind(this);
+  }
+
+  componentWillMount() {
+    this.setState({
+      divID: this.props.divID || `google-search-box-${ randomHex() }`,
       // useFallback by default on SS
       useFallback: (typeof window === 'undefined'),
-    };
-    this.assignRef = this.assignRef.bind(this);
+    });
   }
 
   componentDidMount() {
@@ -70,7 +62,7 @@ export default class GoogleSearch extends React.Component {
 
   displayGoogleSearch() {
     const config = {
-      div: 'google-search-box',
+      div: this.state.divID,
       tag: 'searchbox-only',
       attributes: {
         enableHistory: this.props.enableHistory,
@@ -116,7 +108,7 @@ export default class GoogleSearch extends React.Component {
 
   render() {
     return (
-      <div className="google-search" id="google-search-box">
+      <div className="google-search" id={this.state.divID}>
         <div className="fallback" style={{ display: (this.state.useFallback) ? 'block' : 'none' }}>
           <form
             acceptCharset="UTF-8"
@@ -146,3 +138,20 @@ export default class GoogleSearch extends React.Component {
     );
   }
 }
+
+if (process.env.NODE_ENV === 'production') {
+  GoogleSearch.propTypes = {
+    enableHistory: React.PropTypes.bool,
+    noResultsString: React.PropTypes.string,
+    newWindow: React.PropTypes.bool,
+    gname: React.PropTypes.string,
+    queryParameterName: React.PropTypes.string,
+    language: React.PropTypes.string,
+    resultsUrl: React.PropTypes.string,
+    cx: React.PropTypes.string, // eslint-disable-line id-length
+    googleScriptUrl: React.PropTypes.string,
+    autoFocus: React.PropTypes.bool,
+    divID: React.PropTypes.string,
+  };
+}
+
