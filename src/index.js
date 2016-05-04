@@ -28,7 +28,7 @@ export default class GoogleSearch extends React.Component {
 
   constructor(props) {
     super(props);
-    this.assignRef = this.assignRef.bind(this);
+    this.unmounted = false;
   }
 
   componentWillMount() {
@@ -41,12 +41,23 @@ export default class GoogleSearch extends React.Component {
 
   componentDidMount() {
     this.ensureScriptHasLoaded()
-      .then(() => this.displayGoogleSearch())
-      .then(() => this.focusSearchField())
+      .then(() => {
+        if (this.unmounted) {
+          return;
+        }
+        this.displayGoogleSearch();
+        this.focusSearchField();
+      })
       .catch((exception) => {
         console.error(exception); // eslint-disable-line no-console
-        this.setState({ useFallback: true });
+        if (!this.unmounted) {
+          this.setState({ useFallback: true });
+        }
       });
+  }
+
+  componentWillUnmount() {
+    this.unmounted = true;
   }
 
   focusSearchField() {
@@ -102,10 +113,6 @@ export default class GoogleSearch extends React.Component {
     return googleScript;
   }
 
-  assignRef(ref) {
-    this.googleSearchInputFallbackInput = ref;
-  }
-
   render() {
     return (
       <div className="google-search" id={this.state.divID}>
@@ -124,7 +131,6 @@ export default class GoogleSearch extends React.Component {
               id="edit-search-theme-form-1"
               title="Enter the terms you wish to search for."
               className="gsc-input"
-              ref={this.assignRef}
             />
             <input
               id="edit-cx"

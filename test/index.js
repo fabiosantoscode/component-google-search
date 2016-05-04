@@ -71,6 +71,10 @@ describe('GoogleSearch', () => {
       comp.focusSearchField();
       comp.googleSearchInput.focus.should.not.have.been.called();
     });
+    it('doesn\'t focus the element if this.unmounted is true', () => {
+      comp.unmounted = true;
+      comp.googleSearchInput.focus.should.not.have.been.called();
+    });
   });
 });
 
