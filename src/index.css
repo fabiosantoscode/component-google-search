@@ -17,7 +17,8 @@
   padding: 0;
 }
 
-/* stylelint-disable selector-no-type */
+/* stylelint-disable selector-no-type, selector-no-qualifying-type */
+/* overriding google */
 
 .google-search input.gsc-input {
   padding: 0;
@@ -31,7 +32,7 @@ td.gsc-input {
   background: none;
 }
 
-/* stylelint-enable selector-no-type */
+/* stylelint-enable selector-no-type, selector-no-qualifying-type */
 
 .gsc-input {
   width: 100%;
@@ -41,4 +42,3 @@ td.gsc-input {
 .gsc-clear-button {
   display: none;
 }
-
